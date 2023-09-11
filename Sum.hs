@@ -43,7 +43,7 @@ sum4 = sumAux 0
 {-
 All of these functions give us the same result because (+) is associative and
 commutative. However, none of these functions give us exactly the same
-*computation*: they each process the list in a different order.
+\*computation*: they each process the list in a different order.
 
          sum1 [1,2,3]
            == 1 + (2 + (3 + 0))
@@ -82,6 +82,8 @@ foldl f = go
     go acc (x : xs) = go (acc `f` x) xs
 
 foldlFlip :: (a -> b -> b) -> b -> [a] -> b
+foldlFlip = undefined
+
 -- >>> foldrFlip (flip (:)) [] [1,2,3]
 
 -- >>> foldl (flip (:)) [] [1,2,3]
