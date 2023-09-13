@@ -113,7 +113,7 @@ Now implement using foldr
 -- >>> all (>0) ([1 .. 20] :: [Int])
 -- True
 all :: (a -> Bool) -> [a] -> Bool
-all p = undefined
+all p = foldr (\x acc -> p x && acc) True
 
 testAll :: Test
 testAll =
@@ -151,7 +151,13 @@ Now implement using foldr
 -- >>> last ""
 -- Nothing
 last :: [a] -> Maybe a
-last = undefined
+last =
+  foldr
+    ( \x acc -> case acc of
+        Just m -> Just m
+        Nothing -> Just x
+    )
+    Nothing
 
 {-
 >
@@ -177,7 +183,7 @@ of the first list for which the input function returns `True`.
 -}
 
 filter :: (a -> Bool) -> [a] -> [a]
-filter p = undefined
+filter p = foldr (\x acc -> if p x then x : acc else acc) []
 
 testFilter :: Test
 testFilter =
@@ -209,7 +215,10 @@ Now rewrite this function using 'foldr'
 -}
 
 reverse :: [a] -> [a]
-reverse l = undefined
+-- reverse l = aux l []
+--   where
+--     aux = foldr (\x acc y -> acc (x : y)) id
+reverse l = foldr (\x acc ys -> acc (x : ys)) id l []
 
 testReverse :: Test
 testReverse =
@@ -248,14 +257,21 @@ Now rewrite using 'foldr'
 -}
 
 intersperse :: a -> [a] -> [a]
-intersperse = undefined
+intersperse elem =
+  foldr
+    ( \x acc -> case acc of
+        [] -> x : acc
+        _ -> x : elem : acc
+    )
+    []
 
 testIntersperse :: Test
 testIntersperse =
   "intersperse"
     ~: TestList
       [ "intersperse0" ~: intersperse ',' "abcde" ~=? "a,b,c,d,e",
-        "intersperse1" ~: intersperse ',' "" ~=? ""
+        "intersperse1" ~: intersperse ',' "" ~=? "",
+        "intersperse1" ~: intersperse ',' "a" ~=? "a"
       ]
 
 {-
@@ -288,7 +304,7 @@ But, you can also define `foldl` in terms of `foldr`. Give it a try.
 -}
 
 foldl :: (b -> a -> b) -> b -> [a] -> b
-foldl f z xs = undefined
+foldl f z xs = foldr (\x acc y -> acc (f y x)) id xs z
 
 testFoldl :: Test
 testFoldl = foldl (++) "x" ["1", "2", "3"] ~=? "x123"
